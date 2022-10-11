@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="/js/pixi.min.js"></script>
+    <script>
+        let app;
+        let player; 
+        let bullets = [];
+        let bulletSpeed = 10;
+
+        window.onload = function () {
+            app = new PIXI.Application({
+                width: 800,
+                height: 600,
+                backgroundColor: 0xAAAAAA
+            })
+
+            const gameDiv = document.querySelector('#gameDiv');
+            gameDiv.appendChild(app.view)
+
+            app.stage.interactive = true
+            // app.stage.on('pointerdown', fireBullet)
+            gameDiv.addEventListener('pointerdown', fireBullet)
+
+            //player object
+            player = new PIXI.Sprite.from('images/player.png')
+            player.anchor.set(0.5)
+            player.x = app.view.width / 2;
+            player.y = app.view.height / 2;
+
+            app.stage.addChild(player);
+            
+            app.ticker.add(gameLoop)
+        }   
+        function fireBullet(e)
+        {
+            console.log('FIRE!');
+            let bullet = createBullet();
+            bullets.push(bullet);
+        }
+        function createBullet()
+        {
+            let bullet = new PIXI.Sprite.from('images/bullet.png');
+            bullet.anchor.set(0.5);
+            bullet.x = player.x;
+            bullet.y = player.y;
+            bullet.speed = bulletSpeed;
+            app.stage.addChild(bullet)
+            
+            return bullet
+        }
+        function updateBullets(delta){
+            for(let i = 0; i< bullets.length; i++){
+                if(bullets[i].reverse)
+                    bullets[i].position.y -= bullets[i].speed;
+                else
+                    bullets[i].position.y += bullets[i].speed;
+
+                if(bullets[i].position.y < 0){
+                    // bullets[i].dead = true
+                    bullets[i].reverse = true;
+                }
+                    console.log(bullets[i]);
+            }
+            // for(let i = 0; i< bullets.length; i++){
+            //     if(bullets[i].dead){
+            //         app.stage.removeChild(bullets[i]);
+            //     }
+            // }
+        }
+        function gameLoop(e)
+        {
+            updateBullets();
+        }
+    </script>
+</head>
+<body>
+    <div id="gameDiv"></div>
+</body>
+</html>
