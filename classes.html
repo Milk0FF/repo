@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="/js/pixi.min.js"></script>
+    <script>
+        let app;
+        let bgBack;
+        let bgMiddle;
+        let bgFront;
+        let bgX = 0;
+        let bgSpeed = 1
+        let knight;
+        let wolf;
+
+        class Monster extends PIXI.Sprite{
+            constructor(x = 0, y = 0, texture, name = 'none', hp = 100, speed = 5){
+                super(texture)
+                this.anchor.set(0.5)
+                this.name = name
+                this.hp = hp
+                this.x = x;
+                this.y = y
+                this.speed = speed
+            }
+
+            status()
+            {
+                return this.name + ' has ' + this.hp + ' hit points'
+            }
+
+            move(){
+                this.x = this.x + this.speed;
+                if((this.x > app.view.width - (this.width / 2)) ||
+                    (this.x < (this.width/2))){
+                        this.speed = -this.speed;
+                    }
+            }
+        }
+
+        window.onload = function () {
+            app = new PIXI.Application({
+                width: 800,
+                height: 600,
+                backgroundColor: 0xAAAAAA
+            })
+
+            document.querySelector('#gameDiv').appendChild(app.view)
+
+            app.loader.baseUrl = 'images';
+
+            app.loader
+                .add('knight', 'characters/mouse.png')
+                .add('wolf', 'characters/kreeper.png')
+            app.loader.onComplete.add(doneLoading)
+            app.loader.load()
+        }
+
+        function doneLoading() {
+            createMonsters()
+            app.ticker.add(gameLoop)
+        }
+        
+        function gameLoop(delta) {
+            knight.move()
+            wolf.move();
+        }
+
+        function createMonsters(){
+            knight = new Monster(100, 100, app.loader.resources['knight'].texture, 'Knight', 200, 6)
+            wolf = new Monster(100, 500, app.loader.resources['wolf'].texture, 'Wolf', 100, 10)
+            knight.width /= 5;
+            knight.height /= 5;
+            wolf.width /= 5;
+            wolf.height /= 5;
+            app.stage.addChild(knight)
+            app.stage.addChild(wolf)
+        }
+    </script>
+</head>
+<body>
+    <div id="gameDiv"></div>
+</body>
+</html>
